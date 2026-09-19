@@ -1,0 +1,5403 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#061b14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ticket Eleven">
+<link rel="manifest" href="manifest.json">
+<title> Tricket eliven — User Panel</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#031810;color:#fff;font-size:12px}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:560px;margin:auto;min-height:100vh;background:#061b14}
+.page{display:none;padding:9px}
+.page.active{display:block}
+.card,.match,.player,.livebox,.lb,.setting,.contest{
+ background:#0b271e;border:1px solid #164638;border-radius:7px;padding:5px;margin:4px 0
+}
+  
+#home .homeSmallCard .badgeCard{
+  padding:1pxpx !important;
+  min-height:0 !important;
+  font-size:2px !important;
+}
+
+.header{
+ padding:9px 11px;background:#06150f;border-bottom:1px solid #164638;
+ position:sticky;top:0;z-index:10
+}
+.logo{font-size:19px;font-weight:800;color:#19d66b}
+.logo i{color:#fff;font-style:normal}
+.sub,.small{font-size:9px;color:#9bb8ad}
+.status{font-size:9px;color:#9bb8ad;margin:7px 0}
+.nav{
+ position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+ width:100%;max-width:560px;display:flex;background:#06150f;
+ border-top:1px solid #164638;z-index:20
+}
+.nav button{
+ flex:1;border:0;background:none;color:#8ba89d;padding:8px 2px;font-size:9px
+}
+.nav button.active{color:#19d66b}
+.bottomSpace{height:50px}
+.title{font-size:15px;font-weight:bold;margin:4px 0 8px}
+.row{display:flex;align-items:center;gap:7px}
+.grow{flex:1}
+.btn{
+ border:0;border-radius:7px;padding:7px 9px;background:#19d66b;
+ color:#031810;font-weight:bold;font-size:10px
+}
+.btn.dark{background:#17382e;color:#fff}
+.btn.danger{background:#8d3030;color:#fff}
+.btn.full{width:100%;margin-top:7px}
+.gold{color:#ffd65a}
+.green{color:#19d66b}
+.badge{
+ display:inline-block;background:#b52b2b;color:#fff;border-radius:5px;
+ padding:3px 5px;font-size:8px;font-weight:bold
+}
+.statusPill{
+ font-size:8px;padding:4px 6px;border-radius:5px;
+ background:#203c32;color:#9bb8ad
+}
+input{
+ width:100%;background:#071b14;color:#fff;border:1px solid #245545;
+ border-radius:7px;padding:8px;margin:4px 0
+}
+.tabs,.filters{display:flex;gap:4px;margin:6px 0}
+.tabs button,.filters button{
+ flex:1;border:1px solid #205342;background:#0b271e;color:#9bb8ad;
+ border-radius:6px;padding:6px;font-size:9px
+}
+.tabs button.active,.filters button.active{
+ background:#19d66b;color:#031810
+}
+.hero{
+ background:linear-gradient(135deg,#0d3c2d,#092219);
+ padding:11px;border-radius:10px;margin:7px 0
+}
+.hero h2{margin:0 0 4px;font-size:16px}
+.featureGrid,.badgeGrid{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:5px
+  
+}
+.feature,.badgeCard{
+ background:#0b271e;border:1px solid #164638;border-radius:8px;
+ padding:7px;text-align:center
+}
+.feature b,.badgeCard b{display:block;margin-bottom:3px}
+.player{
+ display:flex;align-items:center;gap:8px;padding:7px
+}
+.avatar{
+ width:30px;height:30px;border-radius:50%;background:#163d30;
+ display:flex;align-items:center;justify-content:center;font-size:16px
+}
+  
+  .feature,.badgeCard{
+ background:#0b271e;border:1px solid #164638;border-radius:8px;
+ padding:7px;text-align:center
+}
+  
+.pm{font-size:8px;color:#8ba89d;margin-top:2px}
+.buy{
+ border:1px solid #28604e;background:#12372b;color:#fff;
+ border-radius:6px;padding:5px 8px;font-weight:bold
+}
+.buy.sel{background:#19d66b;color:#031810}
+.countBox{
+ display:flex;justify-content:space-between;background:#0b271e;
+ border:1px solid #164638;border-radius:8px;padding:7px;margin-bottom:6px
+}
+.score{font-size:19px;font-weight:bold;color:#19d66b;margin:6px 0}
+.liveScoreCard{
+ background:#0b271e;border:1px solid #1a5745;border-radius:9px;padding:9px
+}
+.pointLine{
+ display:flex;justify-content:space-between;padding:6px 0;
+ border-bottom:1px solid #153a30;font-size:10px
+}
+.lb{
+ display:flex;align-items:center;gap:8px;cursor:pointer
+}
+.rank{
+ width:27px;height:27px;border-radius:50%;background:#173d30;
+ display:flex;align-items:center;justify-content:center;font-weight:bold
+}
+.auth{
+ min-height:100vh;padding:18px 12px;display:flex;
+ align-items:center;justify-content:center
+}
+.authBox{
+ width:100%;max-width:400px;background:#0b271e;
+ border:1px solid #164638;border-radius:12px;padding:14px
+}
+.authTitle{text-align:center;margin-bottom:12px}
+.authTitle .logo{font-size:24px}
+.or{text-align:center;color:#719086;font-size:9px;margin:7px}
+.google{
+ width:100%;background:#fff;color:#222;border:0;border-radius:7px;
+ padding:8px;font-weight:bold
+}
+
+.error{font-size:9px;color:#ff8f8f}
+.ok{font-size:9px;color:#19d66b}
+.hide{display:none!important}
+.captainInfo{
+ background:#102f25;border:1px solid #205342;border-radius:8px;
+ padding:8px;margin-top:8px;line-height:20px
+}
+.notification{
+ padding:6px;margin-top:5px;border:1px solid;border-radius:7px;font-size:9px
+}
+.empty{padding:15px;text-align:center;color:#9bb8ad}
+.dangerText{color:#ff9b9b}
+.contest{padding:9px;border-color:#1c624e}
+.contestTitle{font-size:12px;font-weight:bold;margin-bottom:6px}
+.contestLine{font-size:9px;color:#9bb8ad;margin:4px 0}
+.contestLine b{color:#19d66b}
+.contestJoin{min-width:62px}
+.contestTop{display:flex;align-items:center;gap:8px}
+.contestIcon{font-size:19px}
+.joined{background:#17382e!important;color:#9bb8ad!important}
+.wallet{
+ background:#102f25;border:1px solid #28604e;border-radius:8px;
+ padding:6px;margin-top:6px
+}
+.wallet b{color:#19d66b}
+.badgeCost{font-size:8px;color:#ffd65a;margin:3px 0 5px}
+.badgeCount{font-size:15px;font-weight:bold;color:#19d66b;margin:2px 0}
+.badgeMini{font-size:20px;line-height:22px}
+
+/* নতুন Leaderboard অংশ */
+.teamBoard{
+ background:#0b271e;border:1px solid #164638;
+ border-radius:9px;margin:7px 0;overflow:hidden
+}
+.teamBoardHead{
+ padding:9px;display:flex;align-items:center;gap:8px
+}
+.teamBoardBody{
+ border-top:1px solid #164638;
+ padding:5px 9px 8px
+}
+.teamPlayer{
+ display:flex;align-items:center;
+ padding:5px 0;border-bottom:1px solid #153a30;font-size:9px
+}
+.teamPlayer:last-child{border-bottom:0}
+.playerPoint{
+ margin-left:auto;color:#19d66b;font-weight:bold
+}
+.mult{
+ font-size:7px;color:#ffd65a;margin-left:4px
+}
+.expandBtn{
+ background:#17382e;color:#fff;border:0;border-radius:6px;
+ padding:5px 7px;font-size:8px
+}
+.myTeamMark{
+ font-size:7px;background:#19d66b;color:#031810;
+ padding:3px 5px;border-radius:4px;margin-left:4px
+}
+</style>
+</head>
+
+<body>
+
+<div id="authScreen" class="auth">
+<div class="authBox">
+
+<div id="loginBox">
+<div class="authTitle">
+<div class="logo">Fantasy<i>XI</i></div>
+<div class="sub">Fantasy Sports • Secure Account</div>
+</div>
+
+<h3>🔐 Login</h3>
+
+<input id="loginEmail" type="email" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Password">
+
+<div class="row">
+<button class="btn dark" onclick="forgotPassword()">Forgot Password?</button>
+<button class="btn grow" onclick="login()">Login</button>
+</div>
+
+<div class="or">OR</div>
+
+<button class="google" onclick="googleLogin()">
+🔵  with Google
+</button>
+
+<div class="small" style="text-align:center;margin-top:10px">
+নতুন Account নেই?
+<button class="btn dark" onclick="showCreate()">Create Account</button>
+</div>
+
+<div id="loginError" class="error"></div>
+</div>
+
+
+<div id="createBox" class="hide">
+
+<div class="authTitle">
+<div class="logo">Fantasy<i>XI</i></div>
+<div class="sub">Fantasy Sports • Secure Account</div>
+</div>
+
+<h3>📝 Create Account</h3>
+
+<input id="createName" placeholder="আপনার নাম">
+<input id="createEmail" type="email" placeholder="Email">
+<input id="createPassword" type="password" placeholder="Password">
+
+<button class="btn full" onclick="createAccount()">Create Account</button>
+
+<div class="or">OR</div>
+
+<button class="google" onclick="googleLogin()">
+🔵 Continue with Google
+</button>
+
+<div class="small" style="text-align:center;margin-top:10px">
+আগে থেকেই Account আছে?
+<button class="btn dark" onclick="showLogin()">Login</button>
+</div>
+
+<div id="createError" class="error"></div>
+</div>
+
+</div>
+</div>
+
+
+<div id="mainApp" class="app hide">
+
+<header class="header">
+<div class="row">
+<div class="grow">
+<span class="logo">Fantasy<i>XI</i></span>
+<div class="sub">Fantasy Sports • Secure Account</div>
+</div>
+<div class="wallet">🪙 <b id="walletCoins">0</b></div>
+</div>
+</header>
+
+
+<div id="firebaseStatus" class="status">
+🔄 Firebase connecting...
+</div>
+
+
+<!-- HOME -->
+<section id="home" class="page active">
+
+<div class="hero">
+<h2>Ticket Eleven</h2>
+<div class="small">আপনার Fantasy Sports Hub</div>
+
+<div style="margin-top:8px">
+👤 <b id="homeName">Ticket Eleven User</b>
+</div>
+
+<div class="wallet">
+🪙 Wallet:
+<b id="homeCoins">0</b> Coins
+</div>
+</div>
+<div class="card homeSmallCard">
+<div class="row">
+<div class="grow">
+<b>🏅 My Badges</b>
+<div class="small">আপনি কতগুলো Badge পেয়েছেন</div>
+</div>
+</div>
+<div id="badgeCountGrid" class="badgeGrid" style="margin-top:1xpx"></div>
+</dpx>
+
+
+<div class="card homeSmallCard">
+<div class="row">
+<div class="grow">
+<b>🏅 Badge Request</b>
+<div class="small">Coins দিয়ে Badge Request করুন</div>
+</div>
+</div>
+<div id="badgeFeatureGrid" class="badgeGrid" style="margin-top:6px"></div>
+</div>
+
+
+<div class="card">
+
+<div class="row">
+<div class="grow">
+<b>🎁 Referral</b>
+<div class="small">
+বন্ধুকে Refer করলে দুজনেই 100 Coins পাবেন
+</div>
+</div>
+</div>
+
+<div class="wallet">
+আপনার Referral Code:
+<b id="myReferralCode">—</b>
+</div>
+
+<input id="referralInput" placeholder="Referral Code লিখুন">
+
+<button class="btn full" onclick="applyReferral()">
+🎁 Referral Join
+</button>
+
+<div id="referralStatus" class="small"></div>
+
+</div>
+
+
+<div class="card">
+
+<div class="row">
+<div class="grow">
+<b>🔔 Notifications</b>
+<div class="small">সর্বশেষ Badge Status</div>
+</div>
+</div>
+  <div class="card">
+  <b>🎁 Ad দেখে Coin Earn</b>
+  <div class="small">বিজ্ঞাপন দেখে Coin সংগ্রহ করুন</div>
+
+  <button class="btn full" onclick="watchRewardAd()">
+    ▶️ Watch Ad & Earn Coins
+  </button>
+
+  <div id="adRewardStatus" class="small"></div>
+</div>
+
+<div id="notificationList" class="small" style="margin-top:6px">
+কোনো নতুন Notification নেই।
+</div>
+
+</div>
+
+
+<div class="featureGrid">
+
+<div class="feature" onclick="go('matches')">
+<b>🗓 Matches</b>
+<span class="small">Upcoming • Live • Finished</span>
+</div>
+
+<div class="feature" onclick="go('myteams')">
+<b>👥 My Teams</b>
+<span class="small">আপনার Team</span>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- MATCHES -->
+<section id="matches" class="page">
+
+<div class="title">🏏 Matches</div>
+
+
+<div class="tabs">
+
+<button id="tabUpcoming"
+class="active"
+onclick="renderMatches('upcoming',this)">
+Upcoming
+</button>
+
+<button id="tabLive"
+onclick="renderMatches('live',this)">
+Live
+</button>
+
+<button id="tabFinished"
+onclick="renderMatches('finished',this)">
+Finished
+</button>
+
+</div>
+
+<div id="matchList"></div>
+
+<button class="btn dark full" onclick="go('home')">
+← Back
+</button>
+
+</section>
+
+
+<!-- CONTEST -->
+<section id="contests" class="page">
+
+<div class="title">🏆 Contests</div>
+
+<div id="contestMatchName" class="small">
+Match নির্বাচন করুন
+</div>
+
+<div class="card">
+<b>🏆 Available Contests</b>
+<div class="small">
+Team তৈরি করার পর Contest Join করতে পারবেন
+</div>
+</div>
+
+<div id="contestList">
+<div class="card">🔄 Contest load হচ্ছে...</div>
+</div>
+
+<button class="btn dark full" onclick="go('matches')">
+← Back to Matches
+</button>
+
+</section>
+
+
+<!-- CREATE TEAM -->
+<section id="create" class="page">
+
+<div class="title">👥 Create Team</div>
+
+<div id="selectedMatchName" class="small"></div>
+
+<!-- Team Name যোগ করা হয়েছে -->
+<div class="card">
+<b>🏷️ Team Name</b>
+<div class="small">
+Contest-এ Join করার জন্য আগে Team-এর নাম দিন
+</div>
+<input id="teamName" maxlength="30" placeholder="যেমন: Ruhul XI">
+</div>
+
+<div class="small">
+Firebase থেকে এই Match-এর Player নির্বাচন করুন
+</div>
+
+<div class="countBox">
+<span>
+Players <b id="cnt">0</b>/11
+</span>
+
+<span>
+Credits <b id="credit">100</b>
+</span>
+</div>
+
+<div class="filters">
+
+<button class="active"
+onclick="filterRole('ALL',this)">
+All
+</button>
+
+<button onclick="filterRole('BAT',this)">
+BAT
+</button>
+
+<button onclick="filterRole('AR',this)">
+AR
+</button>
+
+<button onclick="filterRole('WK',this)">
+WK
+</button>
+
+<button onclick="filterRole('BOWL',this)">
+BOWL
+</button>
+
+</div>
+
+<div id="players"></div>
+
+<button class="btn full" onclick="goCV()">
+Next: C / VC →
+</button>
+
+<button class="btn dark full" onclick="go('matches')">
+← Back
+</button>
+
+</section>
+
+
+<!-- CAPTAIN VC -->
+<section id="cv" class="page">
+
+<div class="title">
+👑 Captain / ⭐ Vice-Captain
+</div>
+
+<div class="small">
+Captain 2× এবং VC 1.5× Points
+</div>
+
+<div id="cvList"></div>
+
+<button class="btn full" onclick="saveTeam()">
+💾 Save Team
+</button>
+
+<button class="btn dark full" onclick="go('create')">
+← Back
+</button>
+
+</section>
+
+
+<!-- SAVED -->
+<section id="saved" class="page">
+
+<div class="title">✅ Team Saved</div>
+
+  <div class="card" onclick="editTeam('${t.id}')">
+
+<div style="font-size:20px">✓</div>
+
+<b>Your Team has been saved</b>
+
+<div id="savedInfo" class="small"></div>
+
+</>
+
+<button class="btn full" onclick="go('myteams')">
+View My Teams
+</button>
+
+<button class="btn dark full" onclick="go('matches')">
+← Matches
+</button>
+
+</section>
+
+
+<!-- MY TEAMS -->
+<section id="myteams" class="page">
+
+<div class="title">📋 My Teams</div>
+
+<div class="small">
+Firebase-এর <b>teams</b> collection থেকে আপনার Team
+</div>
+
+<div id="teams"></div>
+
+<button class="btn full" onclick="createAnother()">
++ Create Another Team
+</button>
+
+</section>
+
+
+<!-- LIVE -->
+<section id="live" class="page">
+
+<div class="title">🔴 Live Matches</div>
+
+<div id="liveList"></div> 
+  
+  <div id="liveContestList"></div>
+
+<button class="btn dark full" onclick="go('matches')">
+← Back
+</button>
+
+</section>
+
+
+<!-- LIVE SCORE -->
+<section id="livescore" class="page">
+
+<div class="title">📺 Live Score</div>
+
+<div id="liveScoreBox"></div>
+
+<button class="btn full" onclick="go('points')">
+View Live Points
+</button>
+
+<button class="btn dark full" onclick="go('matches')">
+← Back
+</button>
+
+</section>
+
+
+<!-- LIVE POINTS -->
+<section id="points" class="page">
+
+<div class="title">⭐ Live Points</div>
+
+<div id="pointBox"></div>
+
+<button class="btn full" onclick="go('leaderboard')">
+Leaderboard →
+</button>
+
+</section>
+
+
+<!-- LEADERBOARD -->
+<section id="leaderboard" class="page">
+
+<div class="title">🏆 Leaderboard</div>
+
+<div class="small">
+এই Match-এর সব Team এবং তাদের Player Points
+</div>
+
+<div id="leaderBox">
+<div class="card">🔄 Leaderboard load হচ্ছে...</div>
+</div>
+
+<button class="btn dark full" onclick="go('matches')">
+← Matches
+</button>
+
+</section>
+
+
+<!-- BADGE REQUEST -->
+<section id="badgeRequest" class="page">
+
+<div class="title">🏅 Badge Request</div>
+
+<div class="card">
+
+<div id="requestBadgeInfo" class="small">
+Badge নির্বাচন করুন
+</div>
+
+<input id="badgeRequestName" placeholder="আপনার নাম">
+
+<input
+id="badgeRequestPhone"
+inputmode="numeric"
+maxlength="11"
+placeholder="১১ সংখ্যার ফোন নম্বর">
+
+<div class="wallet">
+🪙 Current Wallet:
+<b id="requestWalletCoins">0</b> Coins
+</div>
+
+<div id="badgeRequestError" class="error"></div>
+
+<button class="btn full" onclick="submitBadgeRequest()">
+📤 Request পাঠান
+</button>
+
+<button class="btn dark full" onclick="go('home')">
+← Back
+</button>
+
+</div>
+
+</section>
+
+
+<!-- PROFILE -->
+<section id="profile" class="page">
+
+<div class="title">👤 Profile</div>
+
+<div class="card">
+
+<b id="profileName">Ticket Eleven User</b>
+
+<div class="small" id="profileEmail">—</div>
+
+<div class="wallet">
+🪙 Wallet:
+<b id="profileCoins">0</b> Coins
+</div>
+
+</div>
+
+<div class="setting" onclick="go('myteams')">
+👥 My Teams
+<b style="float:right">›</b>
+</div>
+
+<div class="setting" onclick="go('settings')">
+⚙️ Settings
+<b style="float:right">›</b>
+</div>
+
+</section>
+
+
+<!-- SETTINGS -->
+<section id="settings" class="page">
+
+<div class="title">⚙️ Settings</div>
+
+<div class="card">
+
+<h3>👤 Account</h3>
+
+<input id="userName" placeholder="আপনার নাম">
+
+<button class="btn full" onclick="saveUser()">
+Save Name
+</button>
+
+<div id="userStatus" class="small"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3>🪙 Wallet</h3>
+
+<div class="small">Current Coins</div>
+
+<div class="score">
+<span id="settingsCoins">0</span> Coins
+</div>
+
+</div> 
+  
+<!-- DEPOSIT -->
+<div class="card">
+
+<h3>💰 Deposit Coins</h3>
+
+<div class="small">
+টাকা জমা দিয়ে Coins কিনুন
+</div>
+
+<button class="btn full" onclick="openDeposit()">
+💰 Deposit Now
+</button>
+
+</div>
+
+
+<!-- DEPOSIT PANEL -->
+
+<div id="depositPanel"
+style="
+display:none;
+margin-top:15px;
+background:#063b25;
+color:white;
+padding:18px;
+border-radius:15px;
+">
+
+<h3>💰 Deposit Coins</h3>
+
+<div style="
+background:#ffffff12;
+padding:12px;
+border-radius:10px;
+margin-bottom:12px;
+">
+
+<b>💵 Rate</b><br>
+৳50 = 500 Coins
+
+</div>
+
+
+<label>Payment Method</label>
+
+<select id="depositMethod"
+style="
+width:100%;
+padding:12px;
+margin:7px 0 12px;
+border:0;
+border-radius:10px;
+">
+
+<option value="bkash">bKash - Send Money</option>
+<option value="nagad">Nagad - Send Money</option>
+<option value="rocket">Rocket</option>
+<option value="binance">Binance - Manual</option>
+
+</select>
+
+
+<div id="paymentNumber"
+style="
+background:#ffffff15;
+padding:12px;
+border-radius:10px;
+margin-bottom:12px;
+">
+
+bKash Number:
+<b>01639461365</b>
+
+</div>
+
+
+<input
+id="depositAmount"
+type="number"
+min="50"
+step="50"
+placeholder="Amount (৳)"
+style="
+width:100%;
+padding:12px;
+margin:7px 0;
+border:0;
+border-radius:10px;
+box-sizing:border-box;
+">
+
+
+<div id="coinPreview"
+style="
+padding:8px 0;
+font-weight:bold;
+">
+
+Coins: 0
+
+</div>
+
+
+<input
+id="senderNumber"
+type="text"
+placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন"
+style="
+width:100%;
+padding:12px;
+margin:7px 0;
+border:0;
+border-radius:10px;
+box-sizing:border-box;
+">
+
+
+<input
+id="depositTrx"
+type="text"
+placeholder="Transaction ID"
+style="
+width:100%;
+padding:12px;
+margin:7px 0;
+border:0;
+border-radius:10px;
+box-sizing:border-box;
+">
+
+
+<button
+class="btn full"
+onclick="submitDeposit()"
+style="margin-top:10px;"
+>
+
+✅ Submit Deposit
+
+</button>
+
+
+<button
+class="btn dark full"
+onclick="closeDeposit()"
+style="margin-top:8px;"
+>
+
+✕ Close
+
+</button>
+
+
+<div
+id="depositMessage"
+style="
+margin-top:12px;
+font-weight:bold;
+">
+
+</div>
+
+
+<div
+style="
+margin-top:18px;
+background:#ffffff10;
+padding:12px;
+border-radius:10px;
+">
+
+<h3>📜 Deposit History</h3>
+
+<div id="depositHistoryList">
+
+Deposit History এখানে দেখা যাবে
+
+</div>
+
+</div>
+
+</div>
+  
+
+
+<div class="card">
+
+<h3>📧 Email</h3>
+
+<div id="settingsEmail" class="small">—</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>🔥 Firebase</h3>
+
+<div id="firebaseDetails" class="small">
+Connecting...
+</div>
+
+</div>
+
+<button class="btn danger full" onclick="logout()">
+Logout
+</button>
+
+<button class="btn dark full" onclick="go('profile')">
+← Back
+</button>
+
+</section>
+
+
+<div class="bottomSpace"></div>
+
+
+<nav class="nav">
+
+<button class="active" onclick="go('home',this)">
+🏠Home
+</button>
+
+<button onclick="go('matches',this)">
+🏏Matches
+</button>
+
+<button onclick="go('myteams',this)">
+👥Teams
+</button>
+
+<button onclick="go('profile',this)">
+👤Profile
+</button>
+
+</nav>
+
+</div>
+
+
+<div id="toast"
+style="
+display:none;
+position:fixed;
+bottom:65px;
+left:50%;
+transform:translateX(-50%);
+background:#102f25;
+border:1px solid #28604e;
+padding:8px 12px;
+border-radius:8px;
+font-size:10px;
+z-index:99">
+</div>
+  
+
+
+<script type="module">
+
+import{
+initializeApp
+}from"https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+import{
+getAuth,
+onAuthStateChanged,
+signInWithEmailAndPassword,
+createUserWithEmailAndPassword,
+GoogleAuthProvider,
+signInWithPopup,
+sendPasswordResetEmail,
+signOut,
+updateProfile
+}from"https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+import{
+getFirestore,
+collection,
+doc,
+getDoc,
+getDocs,
+setDoc,
+addDoc,
+onSnapshot,
+serverTimestamp,
+runTransaction,
+query,
+where
+}from"https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBNsaBts7sOLcrqSAfl6nlIyXuuRHmsZ7c",
+authDomain:"expensetracker-pro-f170f.firebaseapp.com",
+databaseURL:"https://expensetracker-pro-f170f-default-rtdb.firebaseio.com",
+projectId:"expensetracker-pro-f170f",
+storageBucket:"expensetracker-pro-f170f.firebasestorage.app",
+messagingSenderId:"314248256192",
+appId:"1:314248256192:web:569f91cdd67b72b38aab25",
+measurementId:"G-TQGY1GJ4BP"
+};
+
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const provider=new GoogleAuthProvider();
+
+window.fxFirebase={
+app,auth,db,user:null,ready:false,onSnapshot
+};
+  
+// ================= DEPOSIT SYSTEM =================
+
+const paymentDetails = {
+
+  bkash: {
+    name: "bKash - Send Money",
+    number: "01639461365"
+  },
+
+  nagad: {
+    name: "Nagad - Send Money",
+    number: "01829070521"
+  },
+
+  rocket: {
+    name: "Rocket",
+    number: "01639461365"
+  },
+
+  binance: {
+    name: "Binance - Manual",
+    number: "UID: 896679546"
+  }
+
+};
+
+
+// OPEN DEPOSIT
+
+window.openDeposit = function(){
+
+  const panel = document.getElementById("depositPanel");
+
+  if(panel){
+    panel.style.display = "block";
+  }
+
+  const user = auth.currentUser;
+
+  if(user){
+    loadDepositHistory(user.uid);
+  }
+
+};
+
+
+// CLOSE DEPOSIT
+
+window.closeDeposit = function(){
+
+  const panel = document.getElementById("depositPanel");
+
+  if(panel){
+    panel.style.display = "none";
+  }
+
+};
+
+
+// PAYMENT METHOD CHANGE
+
+const depositMethod =
+document.getElementById("depositMethod");
+
+if(depositMethod){
+
+  depositMethod.onchange = function(){
+
+    const method = this.value;
+
+    const p = paymentDetails[method];
+
+    if(p){
+
+      document.getElementById("paymentNumber").innerHTML =
+        p.name +
+        "<br><b>" +
+        p.number +
+        "</b>";
+
+    }
+
+  };
+
+}
+
+
+// AMOUNT → COINS
+
+const depositAmount =
+document.getElementById("depositAmount");
+
+if(depositAmount){
+
+  depositAmount.oninput = function(){
+
+    const amount = Number(this.value);
+
+    const coins =
+      amount >= 50
+      ? Math.floor(amount / 50) * 500
+      : 0;
+
+    document.getElementById("coinPreview").innerText =
+      "Coins: " + coins;
+
+  };
+
+}
+
+
+// SUBMIT DEPOSIT
+
+window.submitDeposit = async function(){
+
+  const user = auth.currentUser;
+
+  if(!user){
+
+    alert("আগে Login করুন");
+
+    return;
+
+  }
+
+
+  const method =
+    document.getElementById("depositMethod").value;
+
+  const amount =
+    Number(document.getElementById("depositAmount").value);
+
+  const senderNumber =
+    document.getElementById("senderNumber").value.trim();
+
+  const trxId =
+    document.getElementById("depositTrx").value.trim();
+
+
+  if(amount < 50 || amount % 50 !== 0){
+
+    alert("Amount 50, 100, 150... এভাবে দিতে হবে");
+
+    return;
+
+  }
+
+
+  if(!senderNumber){
+
+    alert("যে নম্বর থেকে টাকা পাঠিয়েছেন সেই নম্বর দিন");
+
+    return;
+
+  }
+
+
+  if(!trxId){
+
+    alert("Transaction ID দিন");
+
+    return;
+
+  }
+
+
+  const coins =
+    Math.floor(amount / 50) * 500;
+
+
+  const message =
+    document.getElementById("depositMessage");
+
+
+  try{
+
+    await addDoc(
+      collection(db, "deposits"),
+      {
+
+        userId: user.uid,
+
+        userEmail: user.email || "",
+
+        method: method,
+
+        amount: amount,
+
+        coins: coins,
+
+        senderNumber: senderNumber,
+
+        trxId: trxId,
+
+        status: "pending",
+
+        credited: false,
+
+        createdAt: serverTimestamp()
+
+      }
+    );
+
+
+    message.innerHTML =
+      "✅ Deposit Request পাঠানো হয়েছে।<br>" +
+      "Admin Verify করার পর Coins যোগ হবে।";
+
+
+    document.getElementById("depositAmount").value = "";
+
+    document.getElementById("senderNumber").value = "";
+
+    document.getElementById("depositTrx").value = "";
+
+    document.getElementById("coinPreview").innerText =
+      "Coins: 0";
+
+
+    loadDepositHistory(user.uid);
+
+
+  }catch(error){
+
+    console.error(error);
+
+    message.innerHTML =
+      "❌ Deposit পাঠানো যায়নি।<br>" +
+      error.message;
+
+  }
+
+};
+
+
+// DEPOSIT HISTORY
+
+async function loadDepositHistory(uid){
+
+  const list =
+    document.getElementById("depositHistoryList");
+
+
+  if(!list) return;
+
+
+  try{
+
+    const q = query(
+      collection(db, "deposits"),
+      where("userId", "==", uid)
+    );
+
+
+    const snap =
+      await getDocs(q);
+
+
+    if(snap.empty){
+
+      list.innerHTML =
+        "কোনো Deposit নেই";
+
+      return;
+
+    }
+
+
+    let data = [];
+
+
+    snap.forEach(docSnap => {
+
+      data.push({
+        id: docSnap.id,
+        ...docSnap.data()
+      });
+
+    });
+
+
+    data.sort((a,b) => {
+
+      const x =
+        a.createdAt?.seconds || 0;
+
+      const y =
+        b.createdAt?.seconds || 0;
+
+      return y - x;
+
+    });
+
+
+    list.innerHTML =
+      data.map(d => `
+
+        <div style="
+          background:#ffffff10;
+          padding:10px;
+          margin:8px 0;
+          border-radius:10px;
+        ">
+
+          <b>
+            ${paymentDetails[d.method]?.name || d.method}
+          </b>
+
+          <br>
+
+          Amount:
+          ৳${d.amount}
+
+          <br>
+
+          Coins:
+          ${d.coins}
+
+          <br>
+
+          Sender:
+          ${d.senderNumber || "—"}
+
+          <br>
+
+          TRX:
+          ${d.trxId}
+
+          <br>
+
+          Status:
+          <b>${d.status || "pending"}</b>
+
+        </div>
+
+      `).join("");
+
+
+  }catch(error){
+
+    console.error(error);
+
+    list.innerHTML =
+      "History load করা যায়নি";
+
+  }
+
+}
+
+
+// ================= END DEPOSIT SYSTEM =================
+  
+let matches=[];
+let players=[];
+let playerStats={};
+let teams=[];
+let contests=[];
+let joinedContestIds=[];
+
+let chosen=[];
+let cap=null;
+let vc=null;
+let role="ALL";
+let selectedMatch=null;
+let currentMatchTab="upcoming";
+
+let matchUnsubscribe=null;
+let teamUnsubscribe=null;
+let statsUnsubscribe=null;
+let badgeUnsubscribe=null;
+let contestJoinUnsubscribe=null;
+let walletUnsubscribe=null;
+
+let userCoins=0;
+let requestBadgeId=null;
+
+
+/* HELPERS */
+
+const $=id=>document.getElementById(id);
+
+function toast(t){
+const e=$("toast");
+if(!e)return;
+e.textContent=t;
+e.style.display="block";
+clearTimeout(window.__toastTimer);
+window.__toastTimer=setTimeout(()=>{
+e.style.display="none";
+},2200);
+}
+
+
+function esc(s){
+return String(s??"").replace(
+/[&<>"']/g,
+m=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[m])
+);
+}
+
+
+function showAuthError(id,msg){
+const e=$(id);
+if(e)e.textContent="❌ "+msg;
+}
+
+
+function authError(c){
+return({
+"auth/invalid-credential":"Email অথবা Password ভুল",
+"auth/user-not-found":"Account পাওয়া যায়নি",
+"auth/wrong-password":"Password ভুল",
+"auth/email-already-in-use":"এই Email দিয়ে Account আছে",
+"auth/invalid-email":"সঠিক Email দিন",
+"auth/popup-closed-by-user":"Google Login বন্ধ করা হয়েছে",
+"auth/too-many-requests":"অনেকবার চেষ্টা হয়েছে, পরে আবার চেষ্টা করুন"
+})[c]||"Login Error";
+}
+
+
+function makeReferralCode(uid){
+return"FX"+String(uid).slice(-8).toUpperCase();
+}
+
+
+/* AUTH */
+
+window.login=async()=>{
+const email=$("loginEmail").value.trim();
+const pass=$("loginPassword").value;
+
+if(!email||!pass)
+return showAuthError("loginError","Email ও Password দিন");
+
+try{
+await signInWithEmailAndPassword(auth,email,pass);
+}catch(e){
+showAuthError("loginError",authError(e.code));
+}
+};
+
+
+window.createAccount=async()=>{
+const name=$("createName").value.trim();
+const email=$("createEmail").value.trim();
+const pass=$("createPassword").value;
+
+if(!name)
+return showAuthError("createError","নাম দিন");
+
+if(!email||!pass)
+return showAuthError("createError","Email ও Password দিন");
+
+if(pass.length<6)
+return showAuthError(
+"createError",
+"Password কমপক্ষে ৬ অক্ষরের হতে হবে"
+);
+
+try{
+
+const c=await createUserWithEmailAndPassword(
+auth,email,pass
+);
+
+try{
+await updateProfile(c.user,{displayName:name});
+}catch(_){}
+
+await setDoc(
+doc(db,"users",c.user.uid),
+{
+userId:c.user.uid,
+userName:name,
+email,
+coins:0,
+referralCode:makeReferralCode(c.user.uid),
+referralCompleted:false,
+referralCount:0,
+referralEarned:0,
+createdAt:serverTimestamp(),
+updatedAt:serverTimestamp()
+},
+{merge:true}
+);
+
+}catch(e){
+showAuthError("createError",authError(e.code));
+}
+};
+
+
+window.googleLogin=async()=>{
+try{
+
+const r=await signInWithPopup(auth,provider);
+const u=r.user;
+
+const userRef=doc(db,"users",u.uid);
+const old=await getDoc(userRef);
+
+const data={
+userId:u.uid,
+userName:u.displayName||"Ticket Eleven User",
+email:u.email||"",
+updatedAt:serverTimestamp()
+};
+
+if(!old.exists()){
+Object.assign(data,{
+coins:0,
+referralCode:makeReferralCode(u.uid),
+referralCompleted:false,
+referralCount:0,
+referralEarned:0
+});
+}
+else if(!old.data().referralCode){
+data.referralCode=makeReferralCode(u.uid);
+}
+
+await setDoc(userRef,data,{merge:true});
+
+}catch(e){
+showAuthError("loginError",authError(e.code));
+}
+};
+
+
+window.forgotPassword=async()=>{
+const email=$("loginEmail").value.trim();
+
+if(!email)
+return showAuthError("loginError","আগে Email লিখুন");
+
+try{
+await sendPasswordResetEmail(auth,email);
+toast("📧 Password reset email পাঠানো হয়েছে");
+}catch(e){
+showAuthError("loginError",authError(e.code));
+}
+};
+
+
+window.logout=()=>signOut(auth);
+
+window.showLogin=()=>{
+$("loginBox").classList.remove("hide");
+$("createBox").classList.add("hide");
+};
+
+window.showCreate=()=>{
+$("loginBox").classList.add("hide");
+$("createBox").classList.remove("hide");
+};
+
+
+/* AUTH STATE */
+
+onAuthStateChanged(auth,async user=>{
+
+if(!user){
+
+fxFirebase.user=null;
+fxFirebase.ready=false;
+
+$("authScreen").classList.remove("hide");
+$("mainApp").classList.add("hide");
+
+cleanupListeners();
+
+return;
+}
+
+fxFirebase.user=user;
+fxFirebase.ready=true;
+
+$("authScreen").classList.add("hide");
+$("mainApp").classList.remove("hide");
+
+  $("firebaseStatus").style.display="none";
+$("firebaseDetails").style.display="none";
+
+$("profileEmail").textContent=
+user.email||"Google Account";
+
+$("settingsEmail").textContent=
+user.email||"Google Account";
+
+await loadUserData();
+
+subscribeMatches();
+subscribeTeams();
+startWalletListener();
+startBadgeListener();
+
+renderBadgeFeatures();
+
+});
+
+
+/* USER */
+
+async function loadUserData(){
+
+const u=fxFirebase.user;
+if(!u)return;
+
+const ref=doc(db,"users",u.uid);
+const snap=await getDoc(ref);
+
+let name=u.displayName||"Ticket Eleven User";
+let referralCode=makeReferralCode(u.uid);
+
+if(snap.exists()){
+
+const d=snap.data()||{};
+
+name=d.userName||d.name||name;
+
+userCoins=Number(
+d.coins??d.wallet??0
+);
+
+referralCode=
+d.referralCode||referralCode;
+
+if(!d.referralCode){
+
+await setDoc(
+ref,
+{
+referralCode,
+referralCompleted:false,
+referralCount:Number(d.referralCount||0),
+referralEarned:Number(d.referralEarned||0),
+updatedAt:serverTimestamp()
+},
+{merge:true}
+);
+
+}
+
+}else{
+
+userCoins=0;
+
+await setDoc(
+ref,
+{
+userId:u.uid,
+userName:name,
+email:u.email||"",
+coins:0,
+referralCode,
+referralCompleted:false,
+referralCount:0,
+referralEarned:0,
+createdAt:serverTimestamp(),
+updatedAt:serverTimestamp()
+},
+{merge:true}
+);
+}
+
+updateWalletUI(name,userCoins);
+
+$("myReferralCode").textContent=referralCode;
+
+}
+
+
+function updateWalletUI(name,coins){
+
+userCoins=Number(coins)||0;
+
+$("profileName").textContent=
+name||"Ticket Eleven User";
+
+$("homeName").textContent=
+name||"Ticket Eleven User";
+
+$("userName").value=
+name||"";
+
+$("walletCoins").textContent=userCoins;
+$("homeCoins").textContent=userCoins;
+$("profileCoins").textContent=userCoins;
+$("settingsCoins").textContent=userCoins;
+
+if($("requestWalletCoins"))
+$("requestWalletCoins").textContent=userCoins;
+
+}
+
+
+function startWalletListener(){
+
+const u=fxFirebase.user;
+if(!u)return;
+
+if(walletUnsubscribe)
+walletUnsubscribe();
+
+walletUnsubscribe=
+onSnapshot(
+doc(db,"users",u.uid),
+snap=>{
+
+if(!snap.exists())return;
+
+const d=snap.data()||{};
+
+updateWalletUI(
+d.userName||
+d.name||
+u.displayName||
+"Ticket Eleven User",
+Number(d.coins??d.wallet??0)
+);
+
+if($("myReferralCode"))
+$("myReferralCode").textContent=
+d.referralCode||
+makeReferralCode(u.uid);
+
+},
+e=>console.error("wallet:",e)
+);
+
+}
+
+
+function cleanupListeners(){
+
+[
+matchUnsubscribe,
+teamUnsubscribe,
+statsUnsubscribe,
+badgeUnsubscribe,
+contestJoinUnsubscribe,
+walletUnsubscribe
+].forEach(x=>{
+if(x)x();
+});
+
+matchUnsubscribe=null;
+teamUnsubscribe=null;
+statsUnsubscribe=null;
+badgeUnsubscribe=null;
+contestJoinUnsubscribe=null;
+walletUnsubscribe=null;
+
+}
+
+
+/* MATCH */
+
+function normalizeStatus(m){
+
+const s=String(
+m?.status||""
+).trim().toLowerCase();
+
+if(["complete","completed","finished"].includes(s))
+return"finished";
+
+if(["live","playing"].includes(s))
+return"live";
+
+return"upcoming";
+}
+
+function isLive(m){
+return normalizeStatus(m)==="live";
+}
+
+function isUpcoming(m){
+return normalizeStatus(m)==="upcoming";
+}
+
+function isFinished(m){
+return normalizeStatus(m)==="finished";
+}
+
+function matchTitle(m){
+return m?.name||
+((m?.team1||"Team 1")+" vs "+(m?.team2||"Team 2"));
+}
+
+
+function subscribeMatches(){
+
+if(matchUnsubscribe)
+matchUnsubscribe();
+
+matchUnsubscribe=
+onSnapshot(
+collection(db,"matches"),
+snap=>{
+
+matches=snap.docs.map(
+d=>({id:d.id,...d.data()})
+);
+
+window.matchesReady=true;
+
+updateMatchCounts();
+renderMatches(currentMatchTab);
+renderLive();
+
+if(selectedMatch){
+renderLiveScore();
+loadContests(selectedMatch);
+}
+
+},
+e=>{
+
+console.error(e);
+
+window.matchesReady=true;
+
+$("matchList").innerHTML=
+`<div class="card dangerText">
+❌ Matches load হয়নি।<br><br>
+Firestore Rules ও collection name পরীক্ষা করুন।
+</div>`;
+
+}
+);
+
+}
+
+
+function updateMatchCounts(){}
+
+
+window.renderMatches=function(
+tab="upcoming",
+btn
+){
+
+currentMatchTab=tab;
+
+if(btn){
+
+document
+.querySelectorAll("#matches .tabs button")
+.forEach(x=>x.classList.remove("active"));
+
+btn.classList.add("active");
+
+}
+
+const box=$("matchList");
+
+if(!window.matchesReady){
+
+box.innerHTML=
+`<div class="card">
+🔄 Firebase থেকে Matches load হচ্ছে...
+</div>`;
+
+return;
+}
+
+const arr=matches.filter(
+m=>normalizeStatus(m)===tab
+);
+
+if(!arr.length){
+
+box.innerHTML=
+`<div class="empty">
+📭 এই category-তে কোনো Match নেই।
+</div>`;
+
+return;
+}
+
+box.innerHTML=arr.map(m=>{
+
+const st=normalizeStatus(m);
+
+const action=
+st==="upcoming"
+?
+`<button class="btn"
+onclick="openCreateForMatch('${esc(m.id)}')">
+Team →
+</button>`
+:
+st==="live"
+?
+`<button class="btn"
+onclick="openLive('${esc(m.id)}')">
+Live →
+</button>`
+:
+`<button class="btn"
+onclick="openFinishedMatchLeaderboard('${esc(m.id)}')">
+🏆 Leaderboard →
+</button>`;
+
+const info=
+st==="live"
+?
+`<div class="small">
+<span class="badge">LIVE</span>
+${esc(m.score||"")}
+</div>
+<div class="small">
+${esc(m.over||"")}${esc(m.event||"")}
+</div>`
+:
+st==="upcoming"
+?
+`<div class="small">
+🕒 ${esc(formatDate(
+m.startTime??m.startAt??m.matchTime
+))}
+</div>`
+:
+`<div class="small">
+🏁 Result completed
+</div>`;
+
+return`
+<div class="match">
+
+<div class="row">
+
+<div class="grow">
+
+<b>${esc(matchTitle(m))}</b>
+
+${info}
+
+</div>
+
+${action}
+
+</div>
+
+${
+st==="upcoming"
+?
+`<button class="btn dark full"
+onclick="openContests('${esc(m.id)}')">
+🏆 View Contests
+</button>`
+:""
+}
+
+</div>
+`;
+
+}).join("");
+
+};
+
+
+function formatDate(v){
+
+if(v==null||v==="")
+return"Start time not set";
+
+if(typeof v==="object"&&v.seconds)
+return new Date(
+Number(v.seconds)*1000
+).toLocaleString("bn-BD");
+
+const n=Number(v);
+
+if(Number.isFinite(n))
+return new Date(n).toLocaleString("bn-BD");
+
+return String(v);
+}
+
+
+function getMatch(id){
+
+return matches.find(
+m=>String(m.id)===String(id)
+);
+
+}
+
+
+/* CREATE TEAM */
+
+window.openCreateForMatch=async id=>{
+
+const m=getMatch(id);
+
+if(!m)
+return toast("❌ Match পাওয়া যায়নি");
+
+if(!isUpcoming(m))
+return toast("🔒 এই Match এখন Team তৈরির জন্য বন্ধ");
+
+selectedMatch=id;
+
+await loadMatchPlayers(id);
+
+go("create");
+
+};
+
+
+async function loadMatchPlayers(matchId){
+
+players=[];
+
+$("players").innerHTML=
+`<div class="card">
+🔄 Firebase থেকে Players load হচ্ছে...
+</div>`;
+
+try{
+
+const snap=await getDocs(
+collection(db,"players")
+);
+
+const list=[];
+
+snap.forEach(d=>{
+
+const x=d.data()||{};
+
+const mid=
+x.matchId??
+x.match??
+"";
+
+if(String(mid)!==String(matchId))
+return;
+
+const raw=
+String(x.role||"")
+.trim()
+.toUpperCase();
+
+let r=raw;
+
+if(raw==="BAT"||raw==="BATTER")
+r="BAT";
+
+else if(
+["AR","ALLROUNDER","ALL-ROUNDER","ALL ROUNDER"]
+.includes(raw)
+)
+r="AR";
+
+else if(
+["WK","WICKETKEEPER","WICKET-KEEPER","WICKET KEEPER"]
+.includes(raw)
+)
+r="WK";
+
+else if(
+["BOWL","BOWLER"].includes(raw)
+)
+r="BOWL";
+
+list.push({
+
+id:list.length+1,
+
+firebaseId:d.id,
+
+name:
+x.name||
+x.playerName||
+d.id,
+
+av:
+x.av||
+x.avatar||
+"👤",
+
+role:r,
+
+price:Number(x.price??0)
+
+});
+
+});
+
+players=list;
+
+chosen=[];
+cap=null;
+vc=null;
+role="ALL";
+
+renderPlayers();
+
+$("selectedMatchName").textContent=
+"🏏 "+matchTitle(getMatch(matchId)||{});
+
+if(!players.length){
+
+$("players").innerHTML=
+`<div class="empty">
+❌ এই Match-এর কোনো Player পাওয়া যায়নি।
+</div>`;
+
+return false;
+}
+
+toast("✅ "+players.length+" জন Player পাওয়া গেছে");
+
+return true;
+
+}catch(e){
+
+console.error(e);
+
+$("players").innerHTML=
+`<div class="card dangerText">
+❌ Player load হয়নি।<br><br>
+Firestore Rules পরীক্ষা করুন।
+</div>`;
+
+return false;
+}
+
+}
+
+
+window.filterRole=(r,b)=>{
+
+role=r;
+
+document
+.querySelectorAll(".filters button")
+.forEach(x=>x.classList.remove("active"));
+
+b.classList.add("active");
+
+renderPlayers();
+
+};
+
+
+function renderPlayers(){
+
+const box=$("players");
+
+if(!box)return;
+
+const list=players.filter(
+p=>role==="ALL"||p.role===role
+);
+
+if(!list.length){
+
+box.innerHTML=
+`<div class="empty">
+এই role-এ কোনো Player নেই।
+</div>`;
+
+return;
+}
+
+box.innerHTML=list.map(p=>{
+
+const selected=
+chosen.includes(p.id);
+
+return`
+<div class="player">
+
+<div class="avatar">
+${esc(p.av)}
+</div>
+
+<div class="grow">
+
+<b>${esc(p.name)}</b>
+
+<div class="pm">
+${esc(p.role)} • ${p.price} Credits
+</div>
+
+</div>
+
+<button
+class="buy ${selected?"sel":""}"
+onclick="togglePlayer(${p.id})">
+
+${selected?"✓":"+"}
+
+</button>
+
+</div>
+`;
+
+}).join("");
+
+$("cnt").textContent=chosen.length;
+
+const spent=chosen.reduce(
+(s,id)=>
+s+
+(players.find(p=>p.id===id)?.price||0),
+0
+);
+
+$("credit").textContent=100-spent;
+
+}
+
+
+window.togglePlayer=id=>{
+
+const i=chosen.indexOf(Number(id));
+
+if(i>=0){
+
+chosen.splice(i,1);
+
+if(Number(cap)===Number(id))
+cap=null;
+
+if(Number(vc)===Number(id))
+vc=null;
+
+}else{
+
+const p=players.find(
+x=>x.id===Number(id)
+);
+
+if(!p)return;
+
+const spent=chosen.reduce(
+(s,x)=>
+s+
+(players.find(q=>q.id===x)?.price||0),
+0
+);
+
+if(chosen.length>=11)
+return toast("সর্বোচ্চ ১১ জন");
+
+if(spent+p.price>100)
+return toast("100 Credits-এর বেশি");
+
+chosen.push(Number(id));
+
+}
+
+renderPlayers();
+
+};
+
+
+/* CAPTAIN */
+
+window.goCV=()=>{
+
+const teamName=
+$("teamName").value.trim();
+
+if(!teamName)
+return toast("⚠️ আগে Team Name দিন");
+
+if(chosen.length!==11)
+return toast("⚠️ আগে ১১ জন Player নির্বাচন করুন");
+
+const c=r=>
+chosen.filter(
+id=>players.find(p=>p.id===id)?.role===r
+).length;
+
+if(
+c("BAT")!==5||
+c("AR")!==2||
+c("WK")!==1||
+c("BOWL")!==3
+)
+return toast(
+"⚠️ 5 BAT + 2 AR + 1 WK + 3 BOWL লাগবে"
+);
+
+if(!selectedMatch)
+return toast("❌ Match selected নেই");
+
+cap=null;
+vc=null;
+
+renderCV();
+
+go("cv");
+
+};
+
+
+function renderCV(){
+
+const box=$("cvList");
+
+if(chosen.length!==11){
+
+box.innerHTML=
+`<div class="card">
+⚠️ আগে ১১ জন Player নির্বাচন করুন
+</div>`;
+
+return;
+}
+
+box.innerHTML=
+
+chosen.map(id=>{
+
+const p=players.find(
+x=>x.id===id
+);
+
+if(!p)return"";
+
+return`
+<div class="player">
+
+<div class="avatar">
+${esc(p.av)}
+</div>
+
+<div class="grow">
+
+<b>${esc(p.name)}</b>
+
+<div class="pm">
+${esc(p.role)} • ${p.price} Credits
+</div>
+
+</div>
+
+<button
+class="buy ${Number(cap)===id?"sel":""}"
+onclick="setC(${id})">
+
+${Number(cap)===id?"✓ C":"C"}
+
+</button>
+
+<button
+class="buy ${Number(vc)===id?"sel":""}"
+onclick="setVC(${id})">
+
+${Number(vc)===id?"✓ VC":"VC"}
+
+</button>
+
+</div>
+`;
+
+}).join("")+
+
+`
+<div class="captainInfo">
+
+👑 Captain:
+<b class="green">
+${
+esc(
+cap
+?
+players.find(
+x=>x.id===Number(cap)
+)?.name
+:
+"নির্বাচন করুন"
+)
+}
+</b>
+
+<br>
+
+⭐ Vice-Captain:
+<b class="gold">
+${
+esc(
+vc
+?
+players.find(
+x=>x.id===Number(vc)
+)?.name
+:
+"নির্বাচন করুন"
+)
+}
+</b>
+
+</div>
+`;
+
+}
+
+
+window.setC=id=>{
+
+if(!chosen.includes(Number(id)))
+return;
+
+if(Number(vc)===Number(id))
+vc=null;
+
+cap=
+Number(cap)===Number(id)
+?
+null
+:
+Number(id);
+
+renderCV();
+
+};
+
+
+window.setVC=id=>{
+
+if(!chosen.includes(Number(id)))
+return;
+
+if(Number(cap)===Number(id))
+cap=null;
+
+vc=
+Number(vc)===Number(id)
+?
+null
+:
+Number(id);
+
+renderCV();
+
+};
+
+
+/* SAVE TEAM */
+
+window.saveTeam=async()=>{
+
+const m=getMatch(selectedMatch);
+
+if(!m)
+return toast("❌ Match পাওয়া যায়নি");
+
+if(!isUpcoming(m))
+return toast("🔒 Match Live/Finished — Team বন্ধ");
+
+const teamName=
+$("teamName").value.trim();
+
+if(!teamName)
+return toast("⚠️ Team Name দিন");
+
+if(chosen.length!==11)
+return toast("১১ জন Player নির্বাচন করুন");
+
+if(cap===null||vc===null)
+return toast(
+"👑 Captain এবং ⭐ Vice-Captain নির্বাচন করুন"
+);
+
+if(Number(cap)===Number(vc))
+return toast("C এবং VC আলাদা হতে হবে");
+
+const u=fxFirebase.user;
+
+if(!u)
+return toast("❌ Login প্রয়োজন");
+
+
+const team={
+
+userId:u.uid,
+
+email:u.email||"",
+
+teamName:teamName,
+
+name:teamName,
+
+matchId:selectedMatch,
+
+players:
+chosen
+.map(id=>
+players.find(p=>p.id===id)?.firebaseId
+)
+.filter(Boolean),
+
+playerIds:[...chosen],
+
+playerNames:
+chosen
+.map(id=>
+players.find(p=>p.id===id)?.name
+)
+.filter(Boolean),
+
+captain:
+players.find(
+p=>p.id===Number(cap)
+)?.firebaseId||"",
+
+captainName:
+players.find(
+p=>p.id===Number(cap)
+)?.name||"",
+
+viceCaptain:
+players.find(
+p=>p.id===Number(vc)
+)?.firebaseId||"",
+
+viceCaptainName:
+players.find(
+p=>p.id===Number(vc)
+)?.name||"",
+
+createdAt:serverTimestamp(),
+
+updatedAt:serverTimestamp()
+
+};
+
+
+try{
+
+await addDoc(
+collection(db,"teams"),
+team
+);
+
+$("savedInfo").textContent=
+`${teamName} • ${matchTitle(m)} • 11 Players • 👑 ${team.captainName} • ⭐ ${team.viceCaptainName}`;
+
+chosen=[];
+cap=null;
+vc=null;
+
+go("saved");
+
+toast("✅ Team Firebase-এ Saved");
+
+}catch(e){
+
+console.error(e);
+
+toast(
+"❌ Team Save হয়নি — Firestore Rules পরীক্ষা করুন"
+);
+
+}
+
+};
+
+
+/* TEAMS */
+
+function subscribeTeams(){
+
+const u=fxFirebase.user;
+
+if(!u)return;
+
+if(teamUnsubscribe)
+teamUnsubscribe();
+
+teamUnsubscribe=
+onSnapshot(
+collection(db,"teams"),
+snap=>{
+
+teams=snap.docs
+.map(d=>({
+id:d.id,
+...d.data()
+}))
+.filter(
+t=>
+String(t.userId||"")===
+String(u.uid)
+);
+
+renderTeams();
+
+},
+e=>console.error("teams:",e)
+);
+
+}
+
+
+function renderTeams(){
+
+const box=$("teams");
+
+if(!box)return;
+
+if(!teams.length){
+
+box.innerHTML=
+`<div class="empty">
+এখনো কোনো Team তৈরি হয়নি।
+</div>`;
+
+return;
+}
+
+box.innerHTML=
+teams.map((t,i)=>{
+
+const m=getMatch(
+t.matchId||t.match
+);
+
+const names=
+t.playerNames||[];
+
+const teamName=
+t.teamName||
+t.name||
+"Team "+(i+1);
+
+return`
+
+<div class="card">
+
+<div class="row">
+
+<div class="grow">
+
+<b>${esc(teamName)}</b>
+
+<div class="small">
+${esc(
+m
+?
+matchTitle(m)
+:
+t.matchId||"Match"
+)}
+</div>
+
+<div class="small">
+👑 ${esc(t.captainName||"-")}
+<br>
+⭐ ${esc(t.viceCaptainName||"-")}
+</div>
+
+</div>
+
+<span class="statusPill">
+${names.length||11} Players
+</span>
+
+</div>
+
+</div>
+`;
+
+}).join("");
+
+}
+
+
+window.createAnother=async()=>{
+
+const m=matches.find(isUpcoming);
+
+if(!m)
+return toast("কোনো Upcoming Match নেই");
+
+await openCreateForMatch(m.id);
+
+};
+
+
+/* CONTEST */
+
+function contestMoney(c){
+const entry=Number(c.entryCoins??c.entry??c.entryFee??c.entryPrice??0)||0;
+const prize=Number(c.totalPrizeCoins??c.prizeCoins??c.totalPrize??c.prize??c.prizeMoney??0)||0;
+return{entry,prize};
+}
+
+function contestStatus(c){
+
+return[
+"closed","inactive","disabled","finished"
+].includes(
+String(c.status??"active").trim().toLowerCase()
+) ? "closed" : "active";
+
+}
+
+
+window.openContests=async matchId=>{
+
+const m=getMatch(matchId);
+
+if(!m)
+return toast("❌ Match পাওয়া যায়নি");
+
+if(!isUpcoming(m))
+return toast("🔒 এই Match-এর Contest এখন বন্ধ");
+
+selectedMatch=matchId;
+
+$("contestMatchName").textContent=
+"🏏 "+matchTitle(m);
+
+go("contests");
+
+await loadContests(matchId);
+
+};
+
+
+async function loadContests(matchId){
+
+const box=$("contestList");
+
+if(!box)return;
+
+box.innerHTML=
+`<div class="card">
+🔄 Firebase থেকে Contest load হচ্ছে...
+</div>`;
+
+try{
+
+const snap=
+await getDocs(
+collection(db,"contests")
+);
+
+contests=[];
+
+snap.forEach(d=>{
+
+const x=d.data()||{};
+
+if(
+String(x.matchId??x.match??x.matchID??"")
+===
+String(matchId)
+)
+contests.push({
+id:d.id,
+...x
+});
+
+});
+
+renderContests();
+
+subscribeContestJoins(matchId);
+
+}catch(e){
+
+console.error(e);
+
+box.innerHTML=
+`<div class="card dangerText">
+❌ Contest load হয়নি।
+</div>`;
+
+}
+
+}
+
+
+function renderContests(){
+
+const box=$("contestList");
+
+if(!box)return;
+
+const active=
+contests.filter(
+c=>contestStatus(c)==="active"
+);
+
+if(!active.length){
+
+box.innerHTML=
+`<div class="empty">
+📭 এই Match-এর জন্য কোনো Contest নেই।
+</div>`;
+
+return;
+}
+
+box.innerHTML=
+active.map(c=>{
+
+const{entry,prize}=contestMoney(c);
+
+const name=
+c.name||
+"Contest";
+
+const joined=
+joinedContestIds.includes(
+String(c.id)
+);
+
+return`
+
+<div class="contest">
+
+<div class="contestTop">
+
+<div class="contestIcon">
+🏆
+</div>
+
+<div class="grow">
+
+<div class="contestTitle">
+${esc(name)}
+</div>
+
+<div class="contestLine">
+💰 Entry:
+<b>${entry}</b> Coins
+</div>
+
+<div class="contestLine">
+🏆 Prize:
+<b>${prize}</b> Coins
+</div>
+
+</div>
+
+<button
+class="btn contestJoin ${joined?"joined":""}"
+onclick="joinContest('${esc(c.id)}')"
+${joined?"disabled":""}>
+
+${joined?"Joined":"Join"}
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}).join("");
+
+}
+
+
+function subscribeContestJoins(matchId){
+
+if(contestJoinUnsubscribe)
+contestJoinUnsubscribe();
+
+const u=fxFirebase.user;
+
+if(!u)return;
+
+contestJoinUnsubscribe=
+onSnapshot(
+collection(db,"contestEntries"),
+snap=>{
+
+joinedContestIds=[];
+
+snap.forEach(d=>{
+
+const x=d.data()||{};
+
+if(
+String(x.userId)===
+String(u.uid)&&
+String(
+x.matchId??x.match??""
+)===
+String(matchId)
+)
+joinedContestIds.push(
+String(x.contestId||d.id)
+);
+
+});
+
+renderContests();
+
+},
+e=>console.error("contestEntries:",e)
+);
+
+}
+
+
+/* FINISHED MATCH LEADERBOARD */
+window.openFinishedMatchLeaderboard=async matchId=>{
+
+const m=getMatch(matchId);
+
+if(!m)
+return toast("❌ Match পাওয়া যায়নি");
+
+selectedMatch=String(matchId);
+
+go("leaderboard");
+
+const b=$("leaderBox");
+
+if(!b)return;
+
+b.innerHTML=
+`<div class="card">
+🔄 Finished Match-এর Contest Leaderboard load হচ্ছে...
+</div>`;
+
+try{
+
+const snap=
+await getDocs(
+collection(db,"contests")
+);
+
+const finishedContests=[];
+
+snap.forEach(d=>{
+
+const x=d.data()||{};
+
+if(
+String(x.matchId??x.match??x.matchID??"")===
+String(matchId)
+)
+finishedContests.push({
+id:d.id,
+...x
+});
+
+});
+
+if(!finishedContests.length){
+
+b.innerHTML=
+`<div class="card">
+<div class="title">🏁 ${esc(matchTitle(m))}</div>
+<div class="empty">📭 এই Finished Match-এর কোনো Contest পাওয়া যায়নি।</div>
+</div>`;
+return;
+}
+
+b.innerHTML=
+`<div class="card">
+<div class="title">🏁 ${esc(matchTitle(m))}</div>
+<div class="small">Finished Match — Contest নির্বাচন করে Leaderboard দেখুন</div>
+</div>
+${finishedContests.map(c=>`
+<div class="card">
+<div class="row">
+<div class="grow">
+<b>🏆 ${esc(c.name||"Contest")}</b>
+<div class="small">Contest Leaderboard</div>
+</div>
+<button class="btn" onclick="openContestLeaderboard('${esc(c.id)}')">
+Leaderboard →
+</button>
+</div>
+</div>
+`).join("")}`;
+
+}catch(e){
+
+console.error("Finished Match Leaderboard Error:",e);
+
+b.innerHTML=
+`<div class="card dangerText">
+❌ Finished Match Leaderboard load হয়নি।<br><br>Firestore Rules পরীক্ষা করুন।
+</div>`;
+
+}
+
+};
+
+
+/* JOIN CONTEST */
+
+window.joinContest=async contestId=>{
+
+const u=fxFirebase.user;
+
+if(!u)
+return toast("❌ Login প্রয়োজন");
+
+const c=
+contests.find(
+x=>String(x.id)===String(contestId)
+);
+
+if(!c)
+return toast("❌ Contest পাওয়া যায়নি");
+
+if(contestStatus(c)!=="active")
+return toast("🔒 Contest বন্ধ");
+
+const m=getMatch(selectedMatch);
+
+if(!m)
+return toast("❌ Match পাওয়া যায়নি");
+
+if(!isUpcoming(m))
+return toast("🔒 Match Live হয়ে গেছে");
+
+if(joinedContestIds.includes(String(contestId)))
+return toast("✅ আপনি ইতিমধ্যে Join করেছেন");
+
+
+/* Team অবশ্যই থাকতে হবে */
+
+const myTeam=
+teams.find(
+t=>
+String(t.userId)===
+String(u.uid)&&
+String(t.matchId||t.match)===
+String(selectedMatch)
+);
+
+if(!myTeam)
+return toast(
+"⚠️ আগে Team তৈরি করুন এবং Team Name দিন"
+);
+
+
+const{entry,prize}=contestMoney(c);
+
+const contestName=
+c.name||"Contest";
+
+const userRef=
+doc(db,"users",u.uid);
+
+
+try{
+
+const result=
+await runTransaction(
+db,
+async transaction=>{
+
+const userSnap=
+await transaction.get(userRef);
+
+if(!userSnap.exists())
+throw new Error("USER_NOT_FOUND");
+
+const userData=
+userSnap.data()||{};
+
+const coins=
+Number(
+userData.coins??
+userData.wallet??
+0
+);
+
+if(coins<entry)
+throw new Error(
+"INSUFFICIENT_COINS"
+);
+
+const entryRef=
+doc(collection(db,"contestEntries"));
+
+transaction.update(
+userRef,
+{
+coins:coins-entry,
+updatedAt:serverTimestamp()
+}
+);
+
+transaction.set(
+entryRef,
+{
+contestId:String(contestId),
+contestName,
+matchId:String(selectedMatch),
+matchName:matchTitle(m),
+teamId:myTeam.id,
+teamName:
+myTeam.teamName||
+myTeam.name||
+"Team",
+userId:u.uid,
+userName:
+userData.userName||
+u.displayName||
+"Ticket Eleven User",
+email:u.email||"",
+entry,
+prize,
+status:"joined",
+createdAt:serverTimestamp(),
+updatedAt:serverTimestamp()
+}
+);
+
+return coins-entry;
+
+}
+);
+
+joinedContestIds.push(
+String(contestId)
+);
+
+updateWalletUI(
+$("userName").value||
+u.displayName||
+"Ticket Eleven User",
+result
+);
+
+renderContests();
+
+toast(
+`🏆 Contest Join সফল • ${entry} Coins কাটা হয়েছে`
+);
+
+}catch(e){
+
+console.error(e);
+
+if(e.message==="INSUFFICIENT_COINS")
+return toast(
+`❌ ${entry} Coins প্রয়োজন • আপনার পর্যাপ্ত Coins নেই`
+);
+
+if(e.message==="USER_NOT_FOUND")
+return toast(
+"❌ User Wallet পাওয়া যায়নি"
+);
+
+toast(
+"❌ Join হয়নি — Firestore Rules পরীক্ষা করুন"
+);
+
+}
+
+};
+
+
+/* PLAYER STATS */
+
+function subscribePlayerStats(matchId){
+
+if(statsUnsubscribe)
+statsUnsubscribe();
+
+playerStats={};
+
+if(!matchId)
+return;
+
+statsUnsubscribe=
+onSnapshot(
+collection(db,"playerStats"),
+snap=>{
+
+playerStats={};
+
+snap.forEach(d=>{
+
+const x=d.data()||{};
+
+const mid=
+x.matchId??
+x.statsMatchId??
+x.match;
+
+if(
+String(mid)!==
+String(matchId)
+)
+return;
+
+const pid=
+String(
+x.playerId??
+x.statsPlayerId??
+d.id
+);
+
+/*
+ playerStats এখন player ID এবং player name
+ দুটো দিয়েই রাখা হচ্ছে
+*/
+playerStats[pid]={
+...x,
+id:d.id
+};
+
+if(x.playerName){
+
+playerStats[
+String(x.playerName)
+]={
+...x,
+id:d.id
+};
+
+}
+
+});
+
+renderPoints();
+renderLeaderboard();
+
+},
+e=>console.error(
+"playerStats:",
+e
+)
+);
+
+}
+
+
+/* POINT CALCULATION */
+
+function calculatePoints(s){
+
+if(!s)return 0;
+
+return(
+Number(s.runs||0)
++
+Number(s.fours||0)*2
++
+Number(s.sixes||0)*3
++
+Number(
+s.wickets||
+s.wkts||
+0
+)*4
+);
+
+}
+
+
+/*
+ Direct Firebase Player ID দিয়ে Stats খোঁজা।
+ Leaderboard-এর জন্য এটা খুব গুরুত্বপূর্ণ।
+*/
+
+function statByPlayerId(playerId){
+
+if(!playerId)
+return{};
+
+return playerStats[
+String(playerId)
+]||{};
+}
+
+
+function statForPlayer(p){
+
+if(!p)
+return{};
+
+return(
+playerStats[String(p.firebaseId)]||
+playerStats[String(p.name)]||
+{}
+);
+
+}
+
+
+/* TEAM POINT */
+
+function playerMultiplier(
+playerId,
+playerName,
+t
+){
+
+if(
+String(playerId)===
+String(t.captain)
+||
+String(playerName)===
+String(t.captainName)
+)
+return 2;
+
+if(
+String(playerId)===
+String(t.viceCaptain)
+||
+String(playerName)===
+String(t.viceCaptainName)
+)
+return 1.5;
+
+return 1;
+
+}
+
+
+/*
+ পুরনো Team-এর playerIds অনেক সময় local numeric ID।
+ তাই leaderboard-এর জন্য players collection
+ থেকে Firebase ID মিলিয়ে নেওয়া হচ্ছে।
+*/
+
+function getTeamPlayerObjects(t){
+
+const ids=t.playerIds||[];
+const fids=t.players||[];
+const names=t.playerNames||[];
+
+return ids.map((id,index)=>{
+
+const p=
+players.find(
+x=>Number(x.id)===Number(id)
+);
+
+const firebaseId=
+p?.firebaseId||
+fids[index]||
+"";
+
+const playerName=
+p?.name||
+names[index]||
+"Player "+(index+1);
+
+const avatar=
+p?.av||
+"👤";
+
+const stats=
+statByPlayerId(firebaseId);
+
+const fallbackStats=
+playerStats[String(playerName)]||{};
+
+const finalStats=
+Object.keys(stats).length
+?
+stats
+:
+fallbackStats;
+
+const base=
+calculatePoints(finalStats);
+
+const mul=
+playerMultiplier(
+firebaseId,
+playerName,
+t
+);
+
+return{
+id,
+firebaseId,
+name:playerName,
+av:avatar,
+stats:finalStats,
+base,
+multiplier:mul,
+points:base*mul
+};
+
+});
+
+}
+
+
+function teamPoints(t){
+
+/*
+ যদি playerIds থাকে, সেটি ব্যবহার হবে।
+ আর playerIds না থাকলে players array-এর Firebase ID ব্যবহার হবে।
+*/
+
+let total=0;
+
+const ids=
+Array.isArray(t.playerIds)
+?
+t.playerIds
+:
+[];
+
+const fids=
+Array.isArray(t.players)
+?
+t.players
+:
+[];
+
+const names=
+Array.isArray(t.playerNames)
+?
+t.playerNames
+:
+[];
+
+if(ids.length){
+
+ids.forEach((id,index)=>{
+
+const p=
+players.find(
+x=>Number(x.id)===Number(id)
+);
+
+const pid=
+p?.firebaseId||
+fids[index]||
+"";
+
+const pname=
+p?.name||
+names[index]||
+"";
+
+const stats=
+statByPlayerId(pid);
+
+const fallback=
+playerStats[String(pname)]||{};
+
+const s=
+Object.keys(stats).length
+?
+stats
+:
+fallback;
+
+const base=
+calculatePoints(s);
+
+const mul=
+playerMultiplier(
+pid,
+pname,
+t
+);
+
+total+=base*mul;
+
+});
+
+}else{
+
+fids.forEach((pid,index)=>{
+
+const pname=
+names[index]||
+"";
+
+const s=
+statByPlayerId(pid);
+
+const fallback=
+playerStats[String(pname)]||{};
+
+const final=
+Object.keys(s).length
+?
+s
+:
+fallback;
+
+const base=
+calculatePoints(final);
+
+const mul=
+playerMultiplier(
+pid,
+pname,
+t
+);
+
+total+=base*mul;
+
+});
+
+}
+
+return Number(
+total.toFixed(1)
+);
+
+}
+
+/* LIVE */
+
+window.openLive=id=>{
+
+const m=getMatch(id);
+
+if(!m)
+return toast("❌ Match পাওয়া যায়নি");
+
+if(!isLive(m))
+return toast("🔒 Match এখন Live নয়");
+
+selectedMatch=id;
+
+subscribePlayerStats(id);
+
+renderLiveScore();
+
+go("live");
+
+loadLiveContests(id);
+
+};
+
+
+function renderLive(){
+
+const b=$("liveList");
+
+if(!b)return;
+
+const arr=matches.filter(isLive);
+
+b.innerHTML=
+arr.length
+?
+arr.map(m=>`
+
+<div class="livebox">
+
+<div class="row">
+
+<b>${esc(matchTitle(m))}</b>
+
+<span class="badge">LIVE</span>
+
+</div>
+
+<div class="score">
+${esc(m.score||"")}
+</div>
+
+<div class="small">
+${esc(m.over||"")}
+${esc(m.event||"")}
+</div>
+
+<button
+class="btn full"
+onclick="openLive('${esc(m.id)}')">
+
+Live Score →
+
+</button>
+
+</div>
+
+`).join("")
+:
+`<div class="empty">
+এখন কোনো Match Live নেই।
+</div>`;
+
+}
+
+
+async function loadLiveContests(matchId){
+
+const box=$("liveContestList");
+
+if(!box)return;
+
+box.innerHTML=
+`<div class="card">
+🔄 Contest load হচ্ছে...
+</div>`;
+
+try{
+
+const snap=await getDocs(
+collection(db,"contests")
+);
+
+const list=[];
+
+snap.forEach(d=>{
+
+const c=d.data()||{};
+
+const mid=c.matchId??c.match??"";
+
+if(String(mid)!==String(matchId))
+return;
+
+if(contestStatus(c)==="closed")
+return;
+
+const money=contestMoney(c);
+
+/* Contest-এর আসল নাম */
+
+const name=
+c.name??
+c.contestName??
+c.title??
+`Contest ${list.length+1}`;
+
+list.push({
+id:d.id,
+name,
+prize:money.prize
+});
+
+});
+
+if(!list.length){
+
+box.innerHTML=
+`<div class="empty">
+📭 এই Live Match-এর কোনো Contest নেই।
+</div>`;
+
+return;
+
+}
+
+box.innerHTML=list.map(c=>`
+
+<div class="card">
+
+<div class="row">
+
+<div class="grow">
+
+<b>🏆 ${esc(c.name)}</b>
+
+<div class="contestLine">
+🏆 Prize:
+<b>${c.prize}</b> Coins
+</div>
+
+</div>
+
+<button
+class="btn"
+onclick="openContestLeaderboard('${esc(c.id)}')">
+
+Leaderboard →
+
+</button>
+
+</div>
+
+</div>
+
+`).join("");
+
+}catch(e){
+
+console.error("Live Contest Error:",e);
+
+box.innerHTML=
+`<div class="card dangerText">
+❌ Contest load হয়নি
+</div>`;
+
+}
+
+}
+
+
+function renderLiveScore(){
+
+const b=$("liveScoreBox");
+
+const m=getMatch(selectedMatch);
+
+if(!m)
+return b.innerHTML=
+`<div class="card">
+❌ Match পাওয়া যায়নি।
+</div>`;
+
+if(!isLive(m))
+return b.innerHTML=
+`<div class="card">
+🔒 এই Match এখন Live নয়।
+</div>`;
+
+b.innerHTML=
+`
+<div class="liveScoreCard">
+
+<span class="badge">LIVE</span>
+
+<div class="score">
+${esc(m.score||"")}
+</div>
+
+<div class="small">
+${esc(matchTitle(m))}
+</div>
+
+<div class="small">
+${esc(m.over||"")}
+</div>
+
+<div class="small">
+${esc(m.event||"")}
+</div>
+
+</div>
+`;
+
+}
+
+/* CONTEST LEADERBOARD OPEN */
+
+window.openContestLeaderboard=contestId=>{
+
+window.selectedContest=contestId;
+
+if(!selectedMatch)
+return toast("❌ Match পাওয়া যায়নি");
+
+go("leaderboard");
+
+renderLeaderboard();
+
+};
+
+/* CURRENT USER TEAM */
+
+function currentUserTeam(){
+
+const u=fxFirebase.user;
+
+return teams.find(
+t=>
+String(t.matchId||t.match)===
+String(selectedMatch)&&
+String(t.userId)===
+String(u?.uid)
+);
+
+}
+
+
+/* LIVE PLAYER POINTS */
+
+function renderPoints(){
+
+const b=$("pointBox");
+
+if(!b)return;
+
+const t=currentUserTeam();
+
+if(!t){
+
+b.innerHTML=
+`<div class="empty">
+এই Match-এ আপনার Team নেই।
+</div>`;
+
+return;
+}
+
+
+const list=
+getTeamPlayerObjects(t);
+
+if(!list.length){
+
+b.innerHTML=
+`<div class="empty">
+Player পাওয়া যায়নি।
+</div>`;
+
+return;
+}
+
+
+b.innerHTML=
+
+list.map((p,index)=>{
+
+const s=p.stats||{};
+
+const isC=p.multiplier===2;
+const isVC=p.multiplier===1.5;
+
+return`
+
+<div class="pointLine">
+
+<span>
+
+${esc(p.av)}
+${esc(p.name)}
+
+${
+isC
+?
+`<span class="mult">C 2×</span>`
+:
+isVC
+?
+`<span class="mult">VC 1.5×</span>`
+:
+""
+}
+
+<div class="small">
+Runs ${Number(s.runs||0)}
+•
+4s ${Number(s.fours||0)}
+•
+6s ${Number(s.sixes||0)}
+•
+Wkts ${Number(s.wickets||s.wkts||0)}
+</div>
+
+</span>
+
+<b class="green">
+${p.points}
+</b>
+
+</div>
+
+`;
+
+}).join("")
+
++
+
+`
+<div class="card">
+
+<b>
+Total Fantasy Points:
+<span class="green">
+${teamPoints(t)}
+</span>
+</b>
+
+</div>
+`;
+
+}
+
+
+
+/* =====================================================
+   CONTEST SPECIFIC LEADERBOARD
+   ===================================================== */
+
+window.openContestLeaderboard=async contestId=>{
+
+window.selectedContest=String(contestId);
+
+if(!selectedMatch)
+return toast("❌ Match পাওয়া যায়নি");
+
+go("leaderboard");
+
+const b=$("leaderBox");
+
+if(!b)return;
+
+b.innerHTML=
+`<div class="card">
+🔄 Contest Leaderboard load হচ্ছে...
+</div>`;
+
+try{
+
+/* এই Contest-এ Join করা Team বের করা */
+
+const entrySnap=
+await getDocs(
+collection(db,"contestEntries")
+);
+
+const entries=
+entrySnap.docs
+.map(d=>({
+id:d.id,
+...d.data()
+}))
+.filter(e=>
+String(e.matchId||e.match)===
+String(selectedMatch)&&
+String(e.contestId)===
+String(contestId)&&
+String(e.status||"joined").toLowerCase()!=="cancelled"
+);
+
+/* Contest-এর নাম */
+
+const contestName=
+entries[0]?.contestName||
+contests.find(
+c=>String(c.id)===String(contestId)
+)?.name||
+"Contest";
+
+/* কেউ Join না করলে */
+
+if(!entries.length){
+
+b.innerHTML=
+`
+<div class="card">
+
+<div class="title">
+🏆 ${esc(contestName)}
+</div>
+
+<div class="empty">
+📭 এই Contest-এ এখনো কেউ Join করেনি।
+</div>
+
+</div>
+`;
+
+return;
+}
+
+/* Match-এর সব Team নেওয়া */
+
+const teamSnap=
+await getDocs(
+collection(db,"teams")
+);
+
+const allTeams=
+teamSnap.docs
+.map(d=>({
+id:d.id,
+...d.data()
+}))
+.filter(t=>
+String(t.matchId||t.match)===
+String(selectedMatch)
+);
+
+/*
+ শুধু এই Contest-এ Join করা Team
+*/
+
+const joinedTeamIds=
+new Set(
+entries.map(e=>String(e.teamId))
+);
+
+const board=
+allTeams
+.filter(t=>
+joinedTeamIds.has(String(t.id))
+)
+.map(t=>({
+
+...t,
+total:teamPoints(t)
+
+}));
+
+/* বেশি Points আগে */
+
+board.sort(
+(a,z)=>
+Number(z.total)-
+Number(a.total)
+);
+
+if(!board.length){
+
+b.innerHTML=
+`
+<div class="card">
+
+<div class="title">
+🏆 ${esc(contestName)}
+</div>
+
+<div class="empty">
+📭 এই Contest-এর Team পাওয়া যায়নি।
+</div>
+
+</div>
+`;
+
+return;
+}
+
+const myUid=
+fxFirebase.user?.uid||"";
+
+b.innerHTML=
+`
+
+<div class="card">
+
+<div class="row">
+
+<div class="grow">
+
+<b>🏆 ${esc(contestName)}</b>
+
+<div class="small">
+Contest Leaderboard
+</div>
+
+</div>
+
+<div style="text-align:right">
+
+<b class="green">
+${board.length}
+</b>
+
+<div class="small">
+Teams
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+${
+board.map((t,index)=>{
+
+const teamName=
+t.teamName||
+t.name||
+"Fantasy XI";
+
+const isMine=
+String(t.userId)===
+String(myUid);
+
+const playersList=
+getTeamPlayerObjects(t);
+
+const safeId=
+"contest_lb_"+String(t.id)
+.replace(/[^a-zA-Z0-9_-]/g,"_");
+
+return`
+
+<div class="teamBoard">
+
+<div class="teamBoardHead">
+
+<div class="rank">
+${index+1}
+</div>
+
+<div class="grow">
+
+<b>
+${esc(teamName)}
+</b>
+
+${
+isMine
+?
+`<span class="myTeamMark">MY TEAM</span>`
+:
+""
+}
+
+<div class="small">
+${esc(
+t.userName||
+"Ticket Eleven User"
+)}
+</div>
+
+</div>
+
+<div style="text-align:right">
+
+<b class="green">
+${t.total}
+</b>
+
+<div class="small">
+Points
+</div>
+
+</div>
+
+</div>
+
+<div style="padding:0 9px 7px">
+
+<button
+class="expandBtn"
+onclick="toggleBoardTeam('${safeId}')">
+
+👥 Players দেখুন / Hide
+
+</button>
+
+</div>
+
+<div
+id="${safeId}"
+class="teamBoardBody hide">
+
+${
+playersList.length
+?
+playersList.map(p=>{
+
+const s=p.stats||{};
+
+return`
+
+<div class="player">
+
+<div class="avatar">
+${esc(p.av||"👤")}
+</div>
+
+<div class="grow">
+
+<b>
+${esc(p.name)}
+</b>
+
+<div class="small">
+
+${
+p.multiplier===2
+?
+"👑 Captain • 2×"
+:
+p.multiplier===1.5
+?
+"⭐ Vice Captain • 1.5×"
+:
+"Player"
+}
+
+</div>
+
+</div>
+
+<div style="text-align:right">
+
+<b class="green">
+${Number(p.points).toFixed(1)}
+</b>
+
+<div class="small">
+Points
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}).join("")
+
+:
+
+`<div class="empty">
+📭 Player পাওয়া যায়নি।
+</div>`
+}
+
+</div>
+
+</div>
+
+`;
+
+}).join("")
+}
+
+`;
+
+}catch(e){
+
+console.error("Contest Leaderboard Error:",e);
+
+b.innerHTML=
+`
+<div class="card dangerText">
+
+❌ Contest Leaderboard load হয়নি।
+
+<br><br>
+
+Firestore Rules পরীক্ষা করুন।
+
+</div>
+`;
+
+}
+
+};
+
+
+
+/* LEADERBOARD OPEN/CLOSE */
+
+window.toggleBoardTeam=id=>{
+
+const e=$(id);
+
+if(!e)return;
+
+e.classList.toggle("hide");
+
+};
+
+
+/* BADGES */
+
+const badgeFeatures=[
+
+{
+id:1,
+icon:"🥉",
+name:"Bronze Badge",
+cost:5000
+},
+
+{
+id:2,
+icon:"🥈",
+name:"Silver Badge",
+cost:10000
+},
+
+{
+id:3,
+icon:"🥇",
+name:"Gold Badge",
+cost:15000
+},
+
+{
+id:4,
+icon:"💎",
+name:"Diamond Badge",
+cost:30000
+}
+
+];
+
+
+function renderBadgeCounts(){
+
+const box=$("badgeCountGrid");
+
+if(!box)return;
+
+const counts=
+window.__badgeCounts||
+{1:0,2:0,3:0,4:0};
+
+box.innerHTML=
+badgeFeatures.map(b=>`
+
+<div class="badgeCard">
+
+<div class="badgeMini">
+${b.icon}
+</div>
+
+<b>
+${esc(
+b.name.replace(" Badge","")
+)}
+</b>
+
+<div class="badgeCount">
+${counts[b.id]||0}
+</div>
+
+<div class="small">
+Badge
+</div>
+
+</div>
+
+`).join("");
+
+}
+
+
+function renderBadgeFeatures(){
+
+const box=$("badgeFeatureGrid");
+
+if(!box)return;
+
+box.innerHTML=
+badgeFeatures.map(x=>`
+
+<div class="badgeCard">
+
+<div class="badgeMini">
+${x.icon}
+</div>
+
+<b>${esc(x.name)}</b>
+
+<div class="badgeCost">
+🪙 ${x.cost.toLocaleString()} Coins
+</div>
+
+<button
+class="btn"
+onclick="requestBadge(${x.id})">
+
+Request
+
+</button>
+
+</div>
+
+`).join("");
+
+}
+
+
+window.requestBadge=async id=>{
+
+const b=
+badgeFeatures.find(
+x=>x.id===Number(id)
+);
+
+const u=fxFirebase.user;
+
+if(!b)
+return toast("❌ Badge পাওয়া যায়নি");
+
+if(!u)
+return toast("❌ Login প্রয়োজন");
+
+requestBadgeId=b.id;
+
+$("requestBadgeInfo").innerHTML=
+`${b.icon}
+<b>${b.name}</b>
+<br>
+<span class="small">
+🪙 Cost:
+${b.cost.toLocaleString()} Coins
+</span>`;
+
+try{
+
+const s=
+await getDoc(
+doc(db,"users",u.uid)
+);
+
+const d=
+s.exists()?
+s.data()||{}:
+{};
+
+$("badgeRequestName").value=
+d.userName||
+d.name||
+u.displayName||
+"";
+
+}catch(e){
+
+$("badgeRequestName").value=
+u.displayName||"";
+
+}
+
+$("badgeRequestPhone").value="";
+$("badgeRequestError").textContent="";
+$("requestWalletCoins").textContent=userCoins;
+
+go("badgeRequest");
+
+};
+
+
+window.submitBadgeRequest=async()=>{
+
+const b=
+badgeFeatures.find(
+x=>x.id===Number(requestBadgeId)
+);
+
+const err=
+$("badgeRequestError");
+
+const u=fxFirebase.user;
+
+if(!b){
+
+err.textContent=
+"❌ Badge নির্বাচন করুন";
+
+return;
+}
+
+if(!u){
+
+err.textContent=
+"❌ Login প্রয়োজন";
+
+return;
+}
+
+const inputName=
+$("badgeRequestName").value.trim();
+
+const phone=
+$("badgeRequestPhone").value.trim();
+
+if(!inputName){
+
+err.textContent=
+"❌ আপনার নাম দিন";
+
+return;
+}
+
+if(!/^01\d{9}$/.test(phone)){
+
+err.textContent=
+"❌ সঠিক ১১ সংখ্যার ফোন নম্বর দিন";
+
+return;
+}
+
+try{
+
+const result=
+await runTransaction(
+db,
+async transaction=>{
+
+const userRef=
+doc(db,"users",u.uid);
+
+const userSnap=
+await transaction.get(userRef);
+
+if(!userSnap.exists())
+throw new Error("USER_NOT_FOUND");
+
+const userData=
+userSnap.data()||{};
+
+const coins=
+Number(
+userData.coins??
+userData.wallet??
+0
+);
+
+if(coins<b.cost)
+throw new Error(
+"INSUFFICIENT_COINS"
+);
+
+const requestRef=
+doc(collection(db,"badgeRequests"));
+
+transaction.update(
+userRef,
+{
+userName:inputName,
+phone,
+coins:coins-b.cost,
+updatedAt:serverTimestamp()
+}
+);
+
+transaction.set(
+requestRef,
+{
+badgeId:b.id,
+badgeName:b.name,
+cost:b.cost,
+userId:u.uid,
+userName:inputName,
+phone,
+email:u.email||"",
+status:"pending",
+createdAt:serverTimestamp(),
+updatedAt:serverTimestamp()
+}
+);
+
+return{
+name:inputName,
+coins:coins-b.cost
+};
+
+}
+);
+
+updateWalletUI(
+result.name,
+result.coins
+);
+
+toast(
+`✅ ${b.name} Request পাঠানো হয়েছে • ${b.cost.toLocaleString()} Coins কাটা হয়েছে`
+);
+
+go("home");
+
+}catch(e){
+
+if(e.message==="INSUFFICIENT_COINS"){
+
+err.textContent=
+`❌ এই Badge-এর জন্য
+${b.cost.toLocaleString()} Coins প্রয়োজন।`;
+
+return;
+}
+
+if(e.message==="USER_NOT_FOUND"){
+
+err.textContent=
+"❌ User Wallet পাওয়া যায়নি";
+
+return;
+}
+
+err.textContent=
+"❌ Request Save হয়নি — Firestore Rules পরীক্ষা করুন";
+
+}
+
+};
+
+function startBadgeListener(){
+
+if(badgeUnsubscribe)
+badgeUnsubscribe();
+
+const u=fxFirebase.user;
+
+if(!u)return;
+
+
+/* শুধু এই User-এর Badge Request পড়বে */
+
+const badgeQuery=query(
+collection(db,"badgeRequests"),
+where("userId","==",u.uid)
+);
+
+
+badgeUnsubscribe=
+onSnapshot(
+badgeQuery,
+snap=>{
+
+const list=[];
+
+const counts={
+1:0,
+2:0,
+3:0,
+4:0
+};
+
+
+snap.forEach(ds=>{
+
+const d=ds.data()||{};
+
+const st=String(
+d.status||"pending"
+)
+.trim()
+.toLowerCase();
+
+
+list.push({
+id:ds.id,
+...d,
+status:st
+});
+
+
+/* APPROVED BADGE COUNT */
+
+if(
+st==="approved"||
+st==="approve"||
+d.approved===true
+){
+
+const bid=Number(d.badgeId);
+
+if(
+Object.prototype.hasOwnProperty.call(
+counts,
+bid
+)
+){
+
+counts[bid]++;
+
+}
+
+}
+
+});
+
+
+/* BADGE COUNT UPDATE */
+
+window.__badgeCounts=counts;
+
+renderBadgeCounts();
+
+
+/* NEWEST FIRST */
+
+list.sort((a,b)=>{
+
+const aTime=
+a.updatedAt?.seconds||
+a.createdAt?.seconds||
+0;
+
+const bTime=
+b.updatedAt?.seconds||
+b.createdAt?.seconds||
+0;
+
+return bTime-aTime;
+
+});
+
+
+/* NOTIFICATION */
+
+const box=$("notificationList");
+
+if(!box)return; 
+  
+if(!list.length){
+  
+  
+box.innerHTML=
+"কোনো নতুন Notification নেই।";
+
+return;
+
+}
+
+box.innerHTML=
+list.slice(0,3).map(d=>{
+
+const st=String(
+d.status||"pending"
+)
+.trim()
+.toLowerCase();
+
+
+let icon="⏳";
+
+let text=
+`${d.badgeName||"Badge"} Request Pending`;
+
+
+/* APPROVED */
+
+if(
+st==="approved"||
+st==="approve"||
+d.approved===true
+){
+
+icon="✅";
+
+text=
+`${d.badgeName||"Badge"} Approved`;
+
+}
+
+
+/* REJECTED */
+
+else if(
+st==="rejected"||
+st==="declined"||
+st==="reject"
+){
+
+icon="❌";
+
+text=
+`${d.badgeName||"Badge"} Rejected`;
+
+}
+
+
+return`
+
+<div
+class="notification"
+style="background:#123d31;border-color:#17604a">
+
+${icon} ${esc(text)}
+
+</div>
+
+`;
+
+}).join("");
+
+},
+e=>{
+
+console.error(
+"Badge Notification Error:",
+e
+);
+
+const box=$("notificationList");
+
+if(box){
+
+box.innerHTML=
+`<div class="notification dangerText">
+❌ Badge Notification load হয়নি
+</div>`;
+
+}
+
+}
+);
+
+}
+
+
+/* SAVE PROFILE */
+
+window.saveUser=async()=>{
+
+const n=
+$("userName").value.trim();
+
+if(!n)
+return toast("নাম লিখুন");
+
+try{
+
+await setDoc(
+doc(db,"users",fxFirebase.user.uid),
+{
+userName:n,
+email:fxFirebase.user.email||"",
+updatedAt:serverTimestamp()
+},
+{merge:true}
+);
+
+try{
+await updateProfile(
+fxFirebase.user,
+{displayName:n}
+);
+}catch(_){}
+
+updateWalletUI(n,userCoins);
+
+$("userStatus").textContent=
+"✅ Profile saved";
+
+toast("✅ Profile Saved");
+
+}catch(e){
+
+toast("❌ Profile Save হয়নি");
+
+}
+
+};
+
+
+/* REFERRAL */
+
+window.applyReferral=async()=>{
+
+const u=fxFirebase.user;
+
+const input=
+$("referralInput").value
+.trim()
+.toUpperCase();
+
+const status=
+$("referralStatus");
+
+if(!u)
+return toast("❌ Login প্রয়োজন");
+
+if(!input){
+
+status.textContent=
+"❌ Referral Code লিখুন";
+
+return;
+}
+
+try{
+
+const myRef=
+doc(db,"users",u.uid);
+
+const mySnap=
+await getDoc(myRef);
+
+if(!mySnap.exists()){
+
+status.textContent=
+"❌ User পাওয়া যায়নি";
+
+return;
+}
+
+const myData=
+mySnap.data()||{};
+
+if(
+myData.referralCompleted===true||
+myData.referredBy
+){
+
+status.textContent=
+"❌ আপনি ইতিমধ্যে Referral ব্যবহার করেছেন";
+
+return;
+}
+
+if(
+String(myData.referralCode||"")
+.toUpperCase()===
+input
+){
+
+status.textContent=
+"❌ নিজের Referral Code ব্যবহার করা যাবে না";
+
+return;
+}
+
+const usersSnap=
+await getDocs(
+collection(db,"users")
+);
+
+let referrer=null;
+
+usersSnap.forEach(d=>{
+
+const x=d.data()||{};
+
+if(
+String(x.referralCode||"")
+.toUpperCase()===
+input
+)
+referrer={
+id:d.id,
+data:x
+};
+
+});
+
+if(!referrer){
+
+status.textContent=
+"❌ Referral Code সঠিক নয়";
+
+return;
+}
+
+if(
+String(referrer.id)===
+String(u.uid)
+){
+
+status.textContent=
+"❌ নিজের Referral Code ব্যবহার করা যাবে না";
+
+return;
+}
+
+const referrerRef=
+doc(db,"users",referrer.id);
+
+const result=
+await runTransaction(
+db,
+async transaction=>{
+
+const newUserSnap=
+await transaction.get(myRef);
+
+const oldUserSnap=
+await transaction.get(referrerRef);
+
+if(
+!newUserSnap.exists()||
+!oldUserSnap.exists()
+)
+throw new Error(
+"USER_NOT_FOUND"
+);
+
+const newUser=
+newUserSnap.data()||{};
+
+const oldUser=
+oldUserSnap.data()||{};
+
+if(
+newUser.referralCompleted===true||
+newUser.referredBy
+)
+throw new Error(
+"ALREADY_USED"
+);
+
+const newCoins=
+Number(
+newUser.coins??
+newUser.wallet??
+0
+)+100;
+
+const oldCoins=
+Number(
+oldUser.coins??
+oldUser.wallet??
+0
+)+100;
+
+transaction.update(
+myRef,
+{
+coins:newCoins,
+referredBy:referrer.id,
+referredByCode:input,
+referralCompleted:true,
+referralBonus:100,
+referralCompletedAt:serverTimestamp(),
+updatedAt:serverTimestamp()
+}
+);
+
+transaction.update(
+referrerRef,
+{
+coins:oldCoins,
+referralCount:
+Number(oldUser.referralCount||0)+1,
+referralEarned:
+Number(oldUser.referralEarned||0)+100,
+updatedAt:serverTimestamp()
+}
+);
+
+return{
+coins:newCoins,
+name:
+newUser.userName||
+newUser.name||
+u.displayName||
+"Ticket Eleven User"
+};
+
+}
+);
+
+updateWalletUI(
+result.name,
+result.coins
+);
+
+$("referralInput").value="";
+
+status.textContent=
+"✅ Referral সফল! আপনি 100 Coins পেয়েছেন।";
+
+toast("🎉 Referral সফল • +100 Coins");
+
+}catch(e){
+
+console.error("Referral:",e);
+
+if(e.message==="ALREADY_USED")
+status.textContent=
+"❌ Referral আগে ব্যবহার করা হয়েছে";
+
+else if(e.message==="USER_NOT_FOUND")
+status.textContent=
+"❌ User পাওয়া যায়নি";
+
+else
+status.textContent=
+"❌ Referral সফল হয়নি — Firestore Rules পরীক্ষা করুন";
+
+}
+
+};
+
+
+/* NAVIGATION */
+
+window.go=function(id,nav){
+
+document
+.querySelectorAll(".page")
+.forEach(x=>
+x.classList.remove("active")
+);
+
+const e=$(id);
+
+if(!e)return;
+
+e.classList.add("active");
+
+if(nav){
+
+document
+.querySelectorAll(".nav button")
+.forEach(x=>
+x.classList.remove("active")
+);
+
+nav.classList.add("active");
+
+}
+
+if(id==="matches")
+renderMatches(currentMatchTab);
+
+if(id==="create")
+renderPlayers();
+
+if(id==="cv")
+renderCV();
+
+if(id==="myteams")
+renderTeams();
+
+if(id==="live")
+renderLive();
+
+if(
+id==="contests"&&
+selectedMatch
+)
+loadContests(selectedMatch);
+
+if(id==="livescore"){
+
+subscribePlayerStats(selectedMatch);
+renderLiveScore();
+
+}
+
+if(id==="points"){
+
+subscribePlayerStats(selectedMatch);
+renderPoints();
+
+}
+
+if(id==="leaderboard"){
+
+/*
+ Leaderboard-এ যাওয়ার সময়
+ playerStats load হবে
+ তারপর renderLeaderboard
+*/
+
+subscribePlayerStats(selectedMatch);
+
+setTimeout(
+()=>renderLeaderboard(),
+150
+);
+
+}
+
+if(
+id==="badgeRequest"&&
+$("requestWalletCoins")
+)
+$("requestWalletCoins").textContent=
+userCoins;
+
+if(id==="home")
+renderBadgeCounts();
+
+window.scrollTo(0,0);
+
+};
+  
+  window.watchRewardAd = function(){
+
+  const status = $("adRewardStatus");
+
+  if(status){
+    status.innerText =
+      "📺 বিজ্ঞাপন লোড হচ্ছে...";
+  }
+
+  if(
+    window.AndroidRewardAd &&
+    typeof window.AndroidRewardAd.show === "function"
+  ){
+
+    window.AndroidRewardAd.show();
+
+  }else{
+
+    if(status){
+      status.innerText =
+        "❌ Rewarded Ad এখনো প্রস্তুত নয়";
+    }
+
+  }
+
+};
+
+
+/* ANDROID থেকে Reward পাওয়ার পর কল হবে */
+
+window.rewardAdCompleted = async function(){
+
+  const status = $("adRewardStatus");
+
+  const u = fxFirebase.user;
+
+  if(!u){
+
+    if(status){
+      status.innerText =
+        "❌ Login পাওয়া যায়নি";
+    }
+
+    return;
+
+  }
+
+  try{
+
+    const ref = doc(
+      db,
+      "users",
+      u.uid
+    );
+
+    const newCoins =
+      await runTransaction(
+        db,
+        async(transaction)=>{
+
+          const snap =
+            await transaction.get(ref);
+
+          const oldCoins =
+            snap.exists()
+            ?
+            Number(
+              snap.data().coins ?? 0
+            )
+            :
+            0;
+
+          const updatedCoins =
+            oldCoins + 10;
+
+          transaction.set(
+            ref,
+            {
+              coins: updatedCoins,
+              updatedAt: serverTimestamp()
+            },
+            {
+              merge:true
+            }
+          );
+
+          return updatedCoins;
+
+        }
+      );
+
+    userCoins = newCoins;
+
+    const name =
+      u.displayName ||
+      "Ticket Eleven User";
+
+    updateWalletUI(
+      name,
+      userCoins
+    );
+
+    if(
+      $("requestWalletCoins")
+    ){
+
+      $("requestWalletCoins")
+        .textContent =
+        userCoins;
+
+    }
+
+    if(status){
+
+      status.innerText =
+        "🎉 বিজ্ঞাপন দেখার জন্য +10 Coins যোগ হয়েছে!";
+
+    }
+
+  }catch(e){
+
+    console.error(
+      "Reward Coins:",
+      e
+    );
+
+    if(status){
+
+      status.innerText =
+        "❌ Coins যোগ করা যায়নি";
+
+    }
+
+  }
+
+};
+
+
+/* INITIAL */
+
+renderBadgeFeatures();
+renderBadgeCounts();
+
+$("matchList").innerHTML=
+`<div class="card">
+🔄 Firebase connecting...
+</div>`;
+
+$("contestList").innerHTML=
+`<div class="card">
+🏆 Match নির্বাচন করলে Contest দেখাবে...
+</div>`;
+
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(e=>console.warn("PWA service worker:",e)));}</script>
+</body>
+</html>
